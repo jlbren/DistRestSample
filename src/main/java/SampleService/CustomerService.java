@@ -1,41 +1,59 @@
 package SampleService;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.util.*;
+import java.util.stream.*;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+
+import DataAccess.CustomerDataAccessObject;
 
 @Path("/customers")
 public class CustomerService {
+	
+	private final CustomerDataAccessObject _customerDataAccess;
+	
+	public CustomerService() {
+		_customerDataAccess = new CustomerDataAccessObject();
+	}
 
-  private final CopyOnWriteArrayList<Customer> cList = CustomerList.getInstance();
+	@GET
+	@Path("/all")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getAllCustomers() {
+		try{
+			Collection<Customer> all = _customerDataAccess.ReadAllCustomers();
+		  
+			return "---Customer List---\n"
+					+ all.stream()
+					     .map(c -> c.toString())
+					     .collect(Collectors.joining("\n"));
+		} catch(Exception e) {
+			return "---Error---\n" + 
+					e.getMessage() + "\n" +
+					e.getStackTrace();
+		}
+	}
 
-  @GET
-  @Path("/all")
-  @Produces(MediaType.TEXT_PLAIN)
-  public String getAllCustomers() {
-    return "---Customer List---\n"
-        + cList.stream()
-        .map(c -> c.toString())
-        .collect(Collectors.joining("\n"));
-  }
-
-  @GET
-  @Path("{id}")
-  @Produces(MediaType.TEXT_PLAIN)
-  public String getCustomer(@PathParam("id") long id) {
-    Optional<Customer> match
-        = cList.stream()
-        .filter(c -> c.getId() == id)
-        .findFirst();
-    
-    if (match.isPresent()) {
-      return "---Customer---\n" + match.get().toString();
-    } else {
-      return "Customer not found";
-    }
-  }
+	@GET
+	@Path("{id}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String getCustomer(@PathParam("id") long id) {
+		try{
+			Collection<Customer> all = _customerDataAccess.ReadAllCustomers();
+		  
+			Optional<Customer> match = all
+					.stream()
+					.filter(c -> c.getId() == id)
+					.findFirst();
+			if (match.isPresent()) {
+				return "---Customer---\n" + match.get().toString();
+			} else {
+				return "Customer not found";
+			}
+		} catch(Exception e){
+			return "---Error---\n" + 
+					e.getMessage() + "\n" +
+					e.getStackTrace();
+		}
+	}
 }
