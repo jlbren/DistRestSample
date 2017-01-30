@@ -2,6 +2,7 @@ package DistRestSample.Client;
 
 import java.util.*;
 import java.net.*;
+import DistRestSample.Contracts.*;
 
 public class ClientCrudActionRun implements Runnable {
 	private final List<Exception> _errors;

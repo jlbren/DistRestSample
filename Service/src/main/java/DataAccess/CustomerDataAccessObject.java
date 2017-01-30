@@ -1,24 +1,23 @@
 package DataAccess;
 
+import DistRestSample.Contracts.*;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import SampleService.Customer;
 
 public class CustomerDataAccessObject {
 	
-	public Collection<Customer> ReadAllCustomers() throws Exception {
-		List<Customer> customers = new ArrayList<Customer>();
+	public Collection<CustomerObject> ReadAllCustomers() throws Exception {
+		List<CustomerObject> customers = new ArrayList<CustomerObject>();
 		Database db = new Database();
 		try{
 			db.ExecuteReader("Select * from customers", (ResultSet row)->{
-				Customer customer = new Customer.CustomerBuilder()
-						.id(row.getLong(row.findColumn("id")))
-						.birthday(row.getString(row.findColumn("birthday")))
-						.firstName(row.getString(row.findColumn("firstname")))
-						.lastName(row.getString(row.findColumn("lastname")))
-						.build();
+				long id = row.getLong(row.findColumn("id"));
+				String birthday = row.getString(row.findColumn("birthday"));
+				String firstname = row.getString(row.findColumn("firstname"));
+				String lastname = row.getString(row.findColumn("lastname"));
+				
+				CustomerObject customer = new CustomerObject(id, firstname, lastname, birthday);
 				customers.add(customer);
 			});
 		} finally {

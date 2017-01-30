@@ -5,7 +5,8 @@ import java.util.stream.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
-import DataAccess.CustomerDataAccessObject;
+import DistRestSample.Contracts.*;
+import DataAccess.*;
 
 @Path("/customers")
 public class CustomerService {
@@ -21,7 +22,7 @@ public class CustomerService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getAllCustomers() {
 		try{
-			Collection<Customer> all = _customerDataAccess.ReadAllCustomers();
+			Collection<CustomerObject> all = _customerDataAccess.ReadAllCustomers();
 		  
 			return "---Customer List---\n"
 					+ all.stream()
@@ -39,11 +40,11 @@ public class CustomerService {
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getCustomer(@PathParam("id") long id) {
 		try{
-			Collection<Customer> all = _customerDataAccess.ReadAllCustomers();
+			Collection<CustomerObject> all = _customerDataAccess.ReadAllCustomers();
 		  
-			Optional<Customer> match = all
+			Optional<CustomerObject> match = all
 					.stream()
-					.filter(c -> c.getId() == id)
+					.filter(c -> c.Id == id)
 					.findFirst();
 			if (match.isPresent()) {
 				return "---Customer---\n" + match.get().toString();

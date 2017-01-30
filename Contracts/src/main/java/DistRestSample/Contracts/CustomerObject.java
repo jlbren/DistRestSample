@@ -3,12 +3,12 @@ package DistRestSample.Contracts;
 import com.google.gson.Gson;
 
 public class CustomerObject {
-	public final int Id;
+	public final long Id;
 	public final String FirstName;
 	public final String LastName;
 	public final String Birthday;
 	
-	public CustomerObject(int id, String firstName, String lastName, String birthday) {
+	public CustomerObject(long id, String firstName, String lastName, String birthday) {
 		Id = id;
 		FirstName = firstName;
 		LastName = lastName;
