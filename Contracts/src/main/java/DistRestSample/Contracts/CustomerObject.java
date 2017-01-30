@@ -1,5 +1,7 @@
 package DistRestSample.Contracts;
 
+import java.util.Collection;
+
 import com.google.gson.Gson;
 
 public class CustomerObject {
@@ -30,6 +32,12 @@ public class CustomerObject {
 		Gson gson = new Gson();
 		CustomerObject instance = gson.fromJson(json, CustomerObject.class);
 		return instance;
+	}
+	
+	public static String ToJson(Collection<CustomerObject> objects) {
+		CustomerObject[] allArray = (CustomerObject[]) objects.toArray();
+		String json = new Gson().toJson(allArray);
+		return json;
 	}
 	
 	public String ToJson() {

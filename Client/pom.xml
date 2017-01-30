@@ -23,11 +23,6 @@
       <scope>test</scope>
     </dependency>
 	<dependency>
-    	<groupId>com.google.code.gson</groupId>
-    	<artifactId>gson</artifactId>
-    	<version>2.8.0</version>
-	</dependency>
-	<dependency>
 		<groupId>DistRestSample</groupId>
 		<artifactId>Contracts</artifactId>
   		<version>0.0.1-SNAPSHOT</version>

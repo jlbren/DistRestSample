@@ -1,7 +1,5 @@
 package SampleService;
 import java.util.*;
-import java.util.stream.*;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -19,15 +17,12 @@ public class CustomerService {
 
 	@GET
 	@Path("/all")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllCustomers() {
 		try{
 			Collection<CustomerObject> all = _customerDataAccess.ReadAllCustomers();
-		  
-			return "---Customer List---\n"
-					+ all.stream()
-					     .map(c -> c.toString())
-					     .collect(Collectors.joining("\n"));
+		    String json = CustomerObject.ToJson(all);
+			return json;
 		} catch(Exception e) {
 			return "---Error---\n" + 
 					e.getMessage() + "\n" +
@@ -37,7 +32,7 @@ public class CustomerService {
 
 	@GET
 	@Path("{id}")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getCustomer(@PathParam("id") long id) {
 		try{
 			Collection<CustomerObject> all = _customerDataAccess.ReadAllCustomers();
@@ -46,8 +41,10 @@ public class CustomerService {
 					.stream()
 					.filter(c -> c.Id == id)
 					.findFirst();
+			
 			if (match.isPresent()) {
-				return "---Customer---\n" + match.get().toString();
+				String json = match.get().ToJson();
+				return json;
 			} else {
 				return "Customer not found";
 			}
@@ -55,6 +52,34 @@ public class CustomerService {
 			return "---Error---\n" + 
 					e.getMessage() + "\n" +
 					e.getStackTrace();
+		}
+	}
+	
+	@POST
+	@Path("{id}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String addCustomer(@PathParam("id") long id, String content) {
+		try {
+			CustomerObject newObj = CustomerObject.FromJson(content);
+			if(newObj.Id != id) {
+				return "Error, ID did not match";
+			}
+			_customerDataAccess.Insert(newObj);
+			return "Success";
+		} catch(Exception e) {
+			return "Insert failed: " + e.getMessage();
+		}
+	}
+	
+	@DELETE
+	@Path("{id}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String deleteCustomer(@PathParam("id") long id) {
+		try {
+			_customerDataAccess.Delete(id);
+			return "Success";
+		} catch(Exception e) {
+			return "Insert failed: " + e.getMessage();
 		}
 	}
 }

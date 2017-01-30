@@ -42,9 +42,23 @@ public class Database {
    }
    
    public void RunNonQuery(String statement) throws SQLException {
-	   Statement stm = _connection.createStatement();
+	   RunNonQuery(statement, new Object[0]);
+   }
+   
+   public void RunNonQuery(String statement, Object[] args) throws SQLException {
+	   PreparedStatement stm = _connection.prepareStatement(statement);
+	   for(int i = 0; i < args.length; i++) {
+		   Object value = args[i];
+		   if(value instanceof String) {
+			   stm.setString(i, (String)value);
+		   } else if(value instanceof Long) {
+			   stm.setLong(i, (long)value);
+		   } else {
+			   throw new RuntimeException("Unexpected type: " + value.getClass().getSimpleName());
+		   }
+	   }
 	   try {
-		   ResultSet set = stm.executeQuery(statement);
+		   ResultSet set = stm.executeQuery();
 		   set.close();
 	   } finally {
 		   stm.close();

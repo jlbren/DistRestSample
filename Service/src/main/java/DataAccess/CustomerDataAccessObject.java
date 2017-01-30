@@ -25,4 +25,27 @@ public class CustomerDataAccessObject {
 		}
 		return customers;
 	}
+
+	public void Insert(CustomerObject newObj) throws Exception {
+		Database db = new Database();
+		try {
+			String stm = "insert into customers (id, birthday, firstname, lastname) values (?, ?, ?, ?)";
+			Object[] parameters = new Object[]{ newObj.Id, newObj.Birthday, newObj.FirstName, newObj.LastName };
+			db.RunNonQuery(stm, parameters);
+		} finally {
+			db.Close();
+		}
+	}
+
+	public void Delete(long id) throws Exception {
+		Database db = new Database();
+		try {
+			String stm = "delete from customers where id = ?";
+			Object[] parameters = new Object[]{id};
+			db.RunNonQuery(stm, parameters);
+		} finally {
+			db.Close();
+		}
+		
+	}
 }
