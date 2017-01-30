@@ -1,4 +1,4 @@
-package DistRestSample.Client;
+package DistRestSample.Contracts;
 
 import com.google.gson.Gson;
 
