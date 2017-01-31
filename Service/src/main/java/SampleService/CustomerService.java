@@ -1,4 +1,5 @@
 package SampleService;
+import java.sql.SQLException;
 import java.util.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -65,6 +66,12 @@ public class CustomerService {
 			} else {
 				_customerDataAccess.Insert(newObj);
 				response = SimpleResponse.Success();
+			}
+		} catch(SQLException e) {
+			if(e.getMessage().contains("Duplicate")){
+				response = SimpleResponse.Error("Customer with id = " + id + " already exists");
+			} else {
+				response = SimpleResponse.Error(e);
 			}
 		} catch(Exception e) {
 			response = SimpleResponse.Error(e);
