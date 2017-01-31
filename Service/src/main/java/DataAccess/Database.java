@@ -17,9 +17,24 @@ public class Database {
    public Database() throws ClassNotFoundException, SQLException {
 	    Class.forName(JDBC_DRIVER);
 	    _connection = DriverManager.getConnection(DB_URL,USER,PASS);
-	    _connection.setAutoCommit(false);
-	    //_connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
-	    _connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+	    SetCommit();
+	    SetIsolationLevel(Connection.TRANSACTION_SERIALIZABLE);
+   }
+   
+   private void SetCommit() throws SQLException {
+	   _connection.setAutoCommit(false);
+	   boolean mode = _connection.getAutoCommit();
+	   if(mode) {
+		   throw new RuntimeException("Failed to set autocommit");
+	   }
+   }
+   
+   private void SetIsolationLevel(int level) throws SQLException {
+	   _connection.setTransactionIsolation(level);
+	   int setLevel = _connection.getTransactionIsolation();
+	   if(setLevel != level) {
+		   throw new RuntimeException("failed to set isolation level");
+	   }
    }
    
    public void ExecuteReader(String statement, IRowReader reader) throws SQLException {

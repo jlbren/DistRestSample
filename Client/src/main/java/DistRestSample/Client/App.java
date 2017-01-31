@@ -9,7 +9,7 @@ public class App
 {
     public static void main( String[] args )
     {
-    	final int ClientThreadCount = 10;
+    	final int ClientThreadCount = 30;
     	final int RunsClient = 100;
     	
     	List<Exception> errors = new ArrayList<Exception>();

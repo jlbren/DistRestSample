@@ -1,6 +1,8 @@
 package SampleService;
 
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.NetworkListener;
+import org.glassfish.grizzly.threadpool.ThreadPoolConfig;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -26,7 +28,21 @@ public class Main {
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+    
+        int coreCount = Runtime.getRuntime().availableProcessors();
+        
+        ThreadPoolConfig config = ThreadPoolConfig.defaultConfig().copy();
+        config.setPoolName("mypool")
+              .setCorePoolSize(coreCount * 10)
+              .setMaxPoolSize(coreCount * 20);
+
+        for(NetworkListener listener : server.getListeners()) {
+        	listener.getTransport().setWorkerThreadPoolConfig(config);
+        }
+        
+        return server;
     }
 
     /**
