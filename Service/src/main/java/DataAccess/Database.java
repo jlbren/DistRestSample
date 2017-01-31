@@ -36,6 +36,7 @@ public class Database {
 		   _connection.commit();
 	   } catch(Exception e){
 		   _connection.rollback();
+		   throw new SQLException(e.getMessage(), e);
 	   } finally {
 		   stm.close();
 	   }
@@ -58,8 +59,11 @@ public class Database {
 		   }
 	   }
 	   try {
-		   ResultSet set = stm.executeQuery();
-		   set.close();
+		   stm.executeUpdate();
+		   _connection.commit();
+	   } catch(Exception e) {
+		   _connection.rollback();
+		   throw new SQLException(e.getMessage(), e);
 	   } finally {
 		   stm.close();
 	   }
