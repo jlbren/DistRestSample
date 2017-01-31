@@ -34,6 +34,7 @@ public class CustomerService {
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getCustomer(@PathParam("id") long id) {
+		CustomerResponse response;
 		try{
 			Collection<CustomerObject> all = _customerDataAccess.ReadAllCustomers();
 		  
@@ -43,43 +44,46 @@ public class CustomerService {
 					.findFirst();
 			
 			if (match.isPresent()) {
-				String json = match.get().ToJson();
-				return json;
+				response = CustomerResponse.Success(new CustomerObject[]{match.get()});
 			} else {
-				return "Customer not found";
+				response = CustomerResponse.Error("Customer not found");
 			}
 		} catch(Exception e){
-			return "---Error---\n" + 
-					e.getMessage() + "\n" +
-					e.getStackTrace();
+			response = CustomerResponse.Error(e);
 		}
+		return response.ToJson();
 	}
 	
 	@POST
 	@Path("{id}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String addCustomer(@PathParam("id") long id, String content) {
+		SimpleResponse response;
 		try {
 			CustomerObject newObj = CustomerObject.FromJson(content);
 			if(newObj.Id != id) {
-				return "Error, ID did not match";
+				response = SimpleResponse.Error("Error, ID did not match");
+			} else {
+				_customerDataAccess.Insert(newObj);
+				response = SimpleResponse.Success();
 			}
-			_customerDataAccess.Insert(newObj);
-			return "Success";
 		} catch(Exception e) {
-			return "Insert failed: " + e.getMessage();
+			response = SimpleResponse.Error(e);
 		}
+		return response.ToJson();
 	}
 	
 	@DELETE
 	@Path("{id}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String deleteCustomer(@PathParam("id") long id) {
+		SimpleResponse response;
 		try {
 			_customerDataAccess.Delete(id);
-			return "Success";
+			response = SimpleResponse.Success();
 		} catch(Exception e) {
-			return "Insert failed: " + e.getMessage();
+			response = SimpleResponse.Error(e);
 		}
+		return response.ToJson();
 	}
 }

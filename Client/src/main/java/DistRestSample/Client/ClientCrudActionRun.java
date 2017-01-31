@@ -33,26 +33,28 @@ public class ClientCrudActionRun implements Runnable {
 
 	@Override
 	public void run() {
+		if(_customer == null) {
+			throw new RuntimeException("Customer is not set");
+		}
 		try {
-			ClientAction action = new ClientAction();
-			URL customer = new URL("http://localhost:8080/myapp/customers/" + _customer.Id);
-			URL allCustomers = new URL("http://localhost:8080/myapp/customers/all");
+			CustomerClient client = new CustomerClient("http://localhost:8080/myapp/customers/");
 			
-			action.Post(customer, HttpContentType.JSON, _customer.ToJson());
-			String customerGet = action.Get(customer, HttpContentType.JSON);
+			client.addCustomer(_customer);
 			
-			CustomerObject readCustomer = CustomerObject.FromJson(customerGet);
+			CustomerObject added = client.getCustomer(_customer.Id);
 			
-			if(!CustomerObject.Equals(readCustomer, _customer)) {
-				throw new RuntimeException("Customers not equal after POST then GET");
+			if(added == null) {
+				throw new RuntimeException("unexpected null from getCustomer()");
 			}
 			
-			action.Delete(customer, HttpContentType.JSON);
+			client.deleteCustomer(_customer.Id);
 			
-			String all = action.Get(allCustomers, HttpContentType.JSON);
+			CustomerObject[] all = client.getAllCustomers();
 			
-			if(all.compareTo("") == 0) {
-				throw new RuntimeException("All customers returned empty string");
+			for(CustomerObject c : all) {
+				if(c.Id == _customer.Id) {
+					throw new RuntimeException("customer id " + _customer.Id + " was not deleted");
+				}
 			}
 			
 		} catch(Exception e) {

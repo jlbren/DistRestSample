@@ -47,8 +47,8 @@ public class Database {
    
    public void RunNonQuery(String statement, Object[] args) throws SQLException {
 	   PreparedStatement stm = _connection.prepareStatement(statement);
-	   for(int i = 0; i < args.length; i++) {
-		   Object value = args[i];
+	   for(int i = 1; i <= args.length; i++) {
+		   Object value = args[i-1];
 		   if(value instanceof String) {
 			   stm.setString(i, (String)value);
 		   } else if(value instanceof Long) {
