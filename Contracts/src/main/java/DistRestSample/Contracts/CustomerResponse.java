@@ -2,6 +2,7 @@ package DistRestSample.Contracts;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 
 import com.google.gson.Gson;
 
@@ -23,6 +24,15 @@ public class CustomerResponse extends SimpleResponse {
 	
 	public static CustomerResponse Success() {
 		return new CustomerResponse(true, "", "", new CustomerObject[0]);
+	}
+	
+	public static CustomerResponse Success(Collection<CustomerObject> customers) {
+		CustomerObject[] array = new CustomerObject[customers.size()];
+		int index = -1;
+		for(CustomerObject c : customers) {
+			array[++index] = c;
+		}
+		return Success(array);
 	}
 	
 	public static CustomerResponse Success(CustomerObject[] customers) {

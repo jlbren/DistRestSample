@@ -24,6 +24,9 @@ public class App
         		System.out.println(e.getMessage());
         		e.printStackTrace(System.out);
     		}
+    		if(run.getErrors().size() == 0) {
+    			System.out.println("No errors, client exiting.");
+    		}
     	}
     	
     	/*ClientAction action = new ClientAction();

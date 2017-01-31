@@ -19,15 +19,14 @@ public class CustomerService {
 	@Path("/all")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllCustomers() {
+		CustomerResponse response;
 		try{
 			Collection<CustomerObject> all = _customerDataAccess.ReadAllCustomers();
-		    String json = CustomerObject.ToJson(all);
-			return json;
+		    response = CustomerResponse.Success(all);
 		} catch(Exception e) {
-			return "---Error---\n" + 
-					e.getMessage() + "\n" +
-					e.getStackTrace();
+			response = CustomerResponse.Error(e);
 		}
+		return response.ToJson();
 	}
 
 	@GET

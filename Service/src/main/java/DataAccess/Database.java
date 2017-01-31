@@ -59,7 +59,10 @@ public class Database {
 		   }
 	   }
 	   try {
-		   stm.executeUpdate();
+		   int rowsUpdated = stm.executeUpdate();
+		   if(rowsUpdated <= 0) {
+			   throw new SQLException("updated rows: " + rowsUpdated);
+		   }
 		   _connection.commit();
 	   } catch(Exception e) {
 		   _connection.rollback();
