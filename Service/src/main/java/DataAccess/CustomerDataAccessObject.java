@@ -56,4 +56,19 @@ public class CustomerDataAccessObject {
 		}
 		
 	}
+
+	public void Update(CustomerObject customer) throws Exception {
+		Database db = new Database();
+		try {
+			String stm = "update " + TableName + " " +
+					"set " + BirthDateCol + " = ?, " 
+						   + FirstNameCol + " = ?, "
+						   + LastNameCol + " = ? " +
+				    "where " + IdCol + " = ?";
+			Object[] parameters = new Object[]{customer.Birthday, customer.FirstName, customer.LastName, customer.Id};
+			db.RunNonQuery(stm, parameters);
+		} finally {
+			db.Close();
+		}
+	}
 }

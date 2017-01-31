@@ -79,6 +79,25 @@ public class CustomerService {
 		return response.ToJson();
 	}
 	
+	@PUT
+	@Path("{id}")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String updateCustomer(@PathParam("id") long id, String content) {
+		SimpleResponse response;
+		try {
+			CustomerObject newObj = CustomerObject.FromJson(content);
+			if(newObj.Id != id) {
+				response = SimpleResponse.Error("Error, ID did not match");
+			} else {
+				_customerDataAccess.Update(newObj);
+				response = SimpleResponse.Success();
+			}
+		} catch(Exception e) {
+			response = SimpleResponse.Error(e);
+		}
+		return response.ToJson();
+	}
+	
 	@DELETE
 	@Path("{id}")
 	@Produces(MediaType.TEXT_PLAIN)

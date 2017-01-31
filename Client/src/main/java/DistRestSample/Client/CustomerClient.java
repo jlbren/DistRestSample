@@ -40,6 +40,15 @@ public class CustomerClient {
 		ThrowFor(response);
 	}
 	
+	public void updateCustomer(CustomerObject customer) throws Exception {
+		ClientAction action = new ClientAction();
+		URL address = new URL(_baseAddress + new Long(customer.Id).toString());
+		String customerJson = customer.ToJson();
+		String json = action.Put(address, HttpContentType.JSON, customerJson);
+		SimpleResponse response = SimpleResponse.FromJson(json);
+		ThrowFor(response);
+	}
+	
 	public void deleteCustomer(long id) throws Exception {
 		ClientAction action = new ClientAction();
 		URL address = new URL(_baseAddress + new Long(id).toString());

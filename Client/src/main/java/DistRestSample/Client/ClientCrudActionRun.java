@@ -6,57 +6,59 @@ import DistRestSample.Contracts.*;
 
 public class ClientCrudActionRun implements Runnable {
 	private final List<Exception> _errors;
-	private CustomerObject _customer;
+	private long _low;
+	private long _high;
+	
+	public ClientCrudActionRun(List<Exception> errors) {
+		_low = 0;
+		_high = 0;
+		_errors = errors;
+	}
 	
 	public ClientCrudActionRun() {
-		_customer = null;
+		_low = 0;
+		_high = 0;
 		_errors = new ArrayList<Exception>();
 	}
 	
-	public Collection<Exception> getErrors() {
-		Collection<Exception> copy = new ArrayList<Exception>();
-		synchronized(_errors) {
-			for(Exception e : _errors) {
-				copy.add(e);
-			}
-		}
-		return copy;
+	public void SetIdRange(long low, long high) {
+		_low = low;
+		_high = high;
 	}
-	
-	public void Reset(CustomerObject obj) {
-		synchronized(_errors) {
-			_errors.clear();
-			_customer = obj;
-		}
-	}
-	
 
 	@Override
 	public void run() {
-		if(_customer == null) {
-			throw new RuntimeException("Customer is not set");
+		if(_low >= _high) {
+			throw new RuntimeException("id range is not set");
 		}
 		try {
-			CustomerClient client = new CustomerClient("http://localhost:8080/myapp/customers/");
-			
-			client.addCustomer(_customer);
-			
-			CustomerObject added = client.getCustomer(_customer.Id);
-			
-			if(added == null) {
-				throw new RuntimeException("unexpected null from getCustomer()");
-			}
-			
-			client.deleteCustomer(_customer.Id);
-			
-			CustomerObject[] all = client.getAllCustomers();
-			
-			for(CustomerObject c : all) {
-				if(c.Id == _customer.Id) {
-					throw new RuntimeException("customer id " + _customer.Id + " was not deleted");
+			for(long i = _low; i < _high; i++) {
+				CustomerClient client = new CustomerClient("http://localhost:8080/myapp/customers/");
+				
+				CustomerObject customer = new CustomerObject(i, "firstname", "lastname", "birthdate");
+				
+				client.addCustomer(customer);
+				
+				CustomerObject added = client.getCustomer(customer.Id);
+				
+				if(added == null) {
+					throw new RuntimeException("unexpected null from getCustomer()");
+				}
+				
+				CustomerObject updated = new CustomerObject(added.Id, "firstname2", "lastname2", "birthdate2");
+				
+				client.updateCustomer(updated);
+				
+				client.deleteCustomer(customer.Id);
+				
+				CustomerObject[] all = client.getAllCustomers();
+				
+				for(CustomerObject c : all) {
+					if(c.Id == customer.Id) {
+						throw new RuntimeException("customer id " + customer.Id + " was not deleted");
+					}
 				}
 			}
-			
 		} catch(Exception e) {
 			synchronized(_errors){
 				_errors.add(e);

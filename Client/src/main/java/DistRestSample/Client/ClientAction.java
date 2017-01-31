@@ -64,7 +64,7 @@ public class ClientAction {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		try{
 			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
+			conn.setRequestMethod("PUT");
 			conn.setRequestProperty("Content-Type", contentType);
 			
 			OutputStream os = conn.getOutputStream();

@@ -1,7 +1,5 @@
 package DistRestSample.Client;
-
-
-import DistRestSample.Contracts.*;
+import java.util.*;
 
 /**
  * Hello world!
@@ -11,21 +9,44 @@ public class App
 {
     public static void main( String[] args )
     {
-		ClientCrudActionRun run = new ClientCrudActionRun();
-		CustomerObject customer = new CustomerObject(10, "first", "last", "bday");
-		run.Reset(customer);
+    	final int ClientThreadCount = 10;
+    	final int RunsClient = 100;
+    	
+    	List<Exception> errors = new ArrayList<Exception>();
     	try{
-    		run.run();
+    		List<Thread> threads = new ArrayList<Thread>();
+    		try{
+    			try{
+		    		for(int i = 0; i < ClientThreadCount; i++) {
+			    		ClientCrudActionRun run = new ClientCrudActionRun(errors);
+			    		run.SetIdRange(i * RunsClient, i * RunsClient + RunsClient - 1);
+			    		Thread th = new Thread(run);
+			    		threads.add(th);
+		    		}
+    			} catch(Exception e) {
+    				threads.clear();
+    				throw new Exception(e.getMessage(), e);
+    			}
+	    		for(Thread t : threads) {
+	    			t.start();
+	    		}
+    		} finally {
+    			for(Thread t : threads) {
+    				t.join();
+    			}
+    		}
     	} catch(Exception e) {
     		System.out.println(e.getMessage());
     		e.printStackTrace(System.out);
     	} finally {
-    		for(Exception e : run.getErrors()) {
+    		for(Exception e : errors) {
         		System.out.println(e.getMessage());
         		e.printStackTrace(System.out);
     		}
-    		if(run.getErrors().size() == 0) {
+    		if(errors.size() == 0) {
     			System.out.println("No errors, client exiting.");
+    		} else {
+    			System.out.println("Error count = " + errors.size());
     		}
     	}
     	

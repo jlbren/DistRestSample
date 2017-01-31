@@ -18,7 +18,8 @@ public class Database {
 	    Class.forName(JDBC_DRIVER);
 	    _connection = DriverManager.getConnection(DB_URL,USER,PASS);
 	    _connection.setAutoCommit(false);
-	    _connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+	    //_connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+	    _connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
    }
    
    public void ExecuteReader(String statement, IRowReader reader) throws SQLException {
