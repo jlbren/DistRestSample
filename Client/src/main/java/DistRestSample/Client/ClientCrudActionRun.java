@@ -53,8 +53,6 @@ public class ClientCrudActionRun implements Runnable {
 				
 				CustomerObject[] all = client.getAllCustomers();
 				
-				//System.out.println("count = " + all.length);
-				
 				/*for(CustomerObject c : all) {
 					if(c.Id == customer.Id) {
 						throw new RuntimeException("customer id " + customer.Id + " was not deleted");

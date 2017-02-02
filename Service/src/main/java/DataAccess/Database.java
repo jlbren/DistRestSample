@@ -3,38 +3,11 @@ package DataAccess;
 import java.sql.*;
 
 public class Database {
-   // JDBC driver name and database URL
-   //static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-   static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-   static final String DB_URL = "jdbc:mysql://localhost/DistRestSample?autoReconnect=true&useSSL=false";
 
-   //  Database credentials
-   static final String USER = "root";
-   static final String PASS = "class";
-   
    private final Connection _connection;
    
    public Database() throws ClassNotFoundException, SQLException {
-	    Class.forName(JDBC_DRIVER);
-	    _connection = DriverManager.getConnection(DB_URL,USER,PASS);
-	    SetCommit();
-	    SetIsolationLevel(Connection.TRANSACTION_SERIALIZABLE);
-   }
-   
-   private void SetCommit() throws SQLException {
-	   _connection.setAutoCommit(false);
-	   boolean mode = _connection.getAutoCommit();
-	   if(mode) {
-		   throw new RuntimeException("Failed to set autocommit");
-	   }
-   }
-   
-   private void SetIsolationLevel(int level) throws SQLException {
-	   _connection.setTransactionIsolation(level);
-	   int setLevel = _connection.getTransactionIsolation();
-	   if(setLevel != level) {
-		   throw new RuntimeException("failed to set isolation level");
-	   }
+	    _connection = ConnectionsFactory.getConnection();
    }
    
    public void ExecuteReader(String statement, IRowReader reader) throws SQLException {
