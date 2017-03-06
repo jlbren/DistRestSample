@@ -4,6 +4,8 @@ import DistRestSample.Contracts.*;
 import java.sql.*;
 import java.util.*;
 
+import Chaos.ChaosSource;
+
 
 public class CustomerDataAccessObject {
 	
@@ -17,6 +19,9 @@ public class CustomerDataAccessObject {
 		List<CustomerObject> customers = new ArrayList<CustomerObject>();
 		Database db = new Database();
 		try{
+
+			ChaosSource.ForDataAccess("Customer").ForMethod("ReadAllCustomers").run();
+			
 			db.ExecuteReader("Select * from " + TableName, (ResultSet row)->{
 				long id = row.getLong(row.findColumn(IdCol));
 				String birthday = row.getString(row.findColumn(BirthDateCol));
@@ -35,6 +40,8 @@ public class CustomerDataAccessObject {
 	public void Insert(CustomerObject newObj) throws Exception {
 		Database db = new Database();
 		try {
+
+			ChaosSource.ForDataAccess("Customer").ForMethod("Insert").run();
 			String stm = "insert into " + TableName + 
 					" (" + IdCol + ", " + BirthDateCol + ", " + FirstNameCol + ", " + LastNameCol + ") " + 
 					"values (?, ?, ?, ?)";
@@ -48,6 +55,7 @@ public class CustomerDataAccessObject {
 	public void Delete(long id) throws Exception {
 		Database db = new Database();
 		try {
+			ChaosSource.ForDataAccess("Customer").ForMethod("Delete").run();
 			String stm = "delete from " + TableName + " where " + IdCol + " = ?";
 			Object[] parameters = new Object[]{id};
 			db.RunNonQuery(stm, parameters);
@@ -60,6 +68,8 @@ public class CustomerDataAccessObject {
 	public void Update(CustomerObject customer) throws Exception {
 		Database db = new Database();
 		try {
+
+			ChaosSource.ForDataAccess("Customer").ForMethod("Update").run();
 			String stm = "update " + TableName + " " +
 					"set " + BirthDateCol + " = ?, " 
 						   + FirstNameCol + " = ?, "

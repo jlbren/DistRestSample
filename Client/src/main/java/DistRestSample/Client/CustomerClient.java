@@ -4,21 +4,33 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 import DistRestSample.Contracts.*;
+import Retries.IRetryPolicy;
+import Retries.ISingleMethodPolicy;
 
 public class CustomerClient {
 	
 	private final String _baseAddress;
+	private final IRetryPolicy _retry;
 	
-	public CustomerClient(String baseAddress) {
+	public CustomerClient(String baseAddress, IRetryPolicy retry) {
 		_baseAddress = baseAddress;
+		_retry = retry;
 	}
 
 	public CustomerObject[] getAllCustomers() throws Exception {
-		ClientAction action = new ClientAction();
-		URL address = new URL(_baseAddress + "all");
-		String json = action.Get(address, HttpContentType.JSON);
-		CustomerResponse response = CustomerResponse.FromJson(json);
-		ThrowFor(response);
+		ISingleMethodPolicy method = _retry.NewMethod();
+		CustomerResponse response;
+		do{
+			ClientAction action = new ClientAction();
+			URL address = new URL(_baseAddress + "all");
+			String json = action.Get(address, HttpContentType.JSON);
+			response = CustomerResponse.FromJson(json);
+			
+			method.HadResponse(response);
+			method.PerformWaitIfNeeded();
+			method.ThrowErrorFromResponseIfAppropriate();
+		} while(method.ShouldRetry());
+		
 		return response.Customers;
 	}
 	

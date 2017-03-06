@@ -10,11 +10,7 @@ public class CustomerResponse extends SimpleResponse {
 	public final CustomerObject[] Customers;
 	
 	public static CustomerResponse Error(Exception e) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		e.printStackTrace(pw);
-		pw.flush();
-		String stackTrace = sw.toString();
+		String stackTrace = ExceptionTraceReader.ReadTrace(e);
 		return new CustomerResponse(false, e.getMessage(), stackTrace, new CustomerObject[0]);
 	}
 	

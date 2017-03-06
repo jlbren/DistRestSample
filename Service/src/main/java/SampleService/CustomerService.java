@@ -6,6 +6,7 @@ import javax.ws.rs.core.*;
 
 import DistRestSample.Contracts.*;
 import DataAccess.*;
+import Chaos.*;
 
 @Path("/customers")
 public class CustomerService {
@@ -22,6 +23,8 @@ public class CustomerService {
 	public String getAllCustomers() {
 		CustomerResponse response;
 		try{
+			ChaosSource.ForService("Customer").ForMethod("getAllCustomers").run();
+			
 			Collection<CustomerObject> all = _customerDataAccess.ReadAllCustomers();
 		    response = CustomerResponse.Success(all);
 		} catch(Exception e) {
@@ -36,6 +39,9 @@ public class CustomerService {
 	public String getCustomer(@PathParam("id") long id) {
 		CustomerResponse response;
 		try{
+
+			ChaosSource.ForService("Customer").ForMethod("getCustomer").run();
+			
 			Collection<CustomerObject> all = _customerDataAccess.ReadAllCustomers();
 		  
 			Optional<CustomerObject> match = all
@@ -60,6 +66,9 @@ public class CustomerService {
 	public String addCustomer(@PathParam("id") long id, String content) {
 		SimpleResponse response;
 		try {
+
+			ChaosSource.ForService("Customer").ForMethod("addCustomer").run();
+			
 			CustomerObject newObj = CustomerObject.FromJson(content);
 			if(newObj.Id != id) {
 				response = SimpleResponse.Error("Error, ID did not match");
@@ -85,6 +94,9 @@ public class CustomerService {
 	public String updateCustomer(@PathParam("id") long id, String content) {
 		SimpleResponse response;
 		try {
+
+			ChaosSource.ForService("Customer").ForMethod("updateCustomer").run();
+			
 			CustomerObject newObj = CustomerObject.FromJson(content);
 			if(newObj.Id != id) {
 				response = SimpleResponse.Error("Error, ID did not match");
@@ -104,6 +116,9 @@ public class CustomerService {
 	public String deleteCustomer(@PathParam("id") long id) {
 		SimpleResponse response;
 		try {
+
+			ChaosSource.ForService("Customer").ForMethod("deleteCustomer").run();
+			
 			_customerDataAccess.Delete(id);
 			response = SimpleResponse.Success();
 		} catch(Exception e) {

@@ -3,6 +3,7 @@ package DistRestSample.Client;
 import java.util.*;
 import java.net.*;
 import DistRestSample.Contracts.*;
+import Retries.ExponentialBackoffRetryPolicy;
 
 public class ClientCrudActionRun implements Runnable {
 	private final List<Exception> _errors;
@@ -33,7 +34,7 @@ public class ClientCrudActionRun implements Runnable {
 		}
 		try {
 			for(long i = _low; i < _high; i++) {
-				CustomerClient client = new CustomerClient("http://localhost:8080/myapp/customers/");
+				CustomerClient client = new CustomerClient("http://localhost:8080/myapp/customers/", new ExponentialBackoffRetryPolicy());
 				
 				CustomerObject customer = new CustomerObject(i, "firstname", "lastname", "birthdate");
 				
